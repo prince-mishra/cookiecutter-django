@@ -41,6 +41,10 @@ DJANGO_APPS = [
     # Useful template tags:
     # 'django.contrib.humanize',
 
+    'django_adminlte',
+     # Optional: Django admin theme (must be before django.contrib.admin)
+    'django_adminlte_theme',
+
     # Admin
     'django.contrib.admin',
 ]
@@ -56,6 +60,12 @@ LOCAL_APPS = [
     # custom users app
     '{{ cookiecutter.project_slug }}.users.apps.UsersConfig',
     # Your stuff: custom apps go here
+
+{% if cookiecutter.use_tastypie == 'y' %}
+    'tastypie',
+{% endif %}
+
+
 ]
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -108,11 +118,22 @@ MANAGERS = ADMINS
 # DATABASE CONFIGURATION
 # ------------------------------------------------------------------------------
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#databases
+
+{% if cookiecutter.database == 'sqlite' %}
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': '{{ cookiecutter.project_slug }}.sqlite3',
+    }
+}
+{% endif %}
+
+{% if cookiecutter.database == 'postgres' %}
 DATABASES = {
     'default': env.db('DATABASE_URL', default='postgres://{% if cookiecutter.windows == 'y' %}localhost{% endif %}/{{cookiecutter.project_slug}}'),
 }
 DATABASES['default']['ATOMIC_REQUESTS'] = True
-
+{% endif %}
 
 # GENERAL CONFIGURATION
 # ------------------------------------------------------------------------------
